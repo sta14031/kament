@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <script src="jquery-3.3.1.min.js"></script>
+<!--    <script type="text/javascript">
+    $(document).ready(function(){
+        // Get Details (of person)
+        $("#getDetails").click(function(){
+            $.ajax({
+                url: "/getPerson?id=" + $("#personID").val(),
+                success: function(result) {
+                    $("#viewer").html(result)
+                }
+            })
+        })
+
+        // Get parents of person
+        $("#getParents").click(function(){
+            $.ajax({
+                url: "/getParents?id=" + $("#personID").val(),
+                success: function(result) {
+                    var res = JSON.parse(result)
+                    var str = ""
+
+                    str += "Father: " + res[0].firstname 
+                    str += " " + res[0].lastname + " <br />"
+                    str += "Mother: " + res[1].firstname
+                    str += " " + res[1].lastname
+
+                    $('#viewer').html(str);
+                }
+            })
+        })
+
+        $("#getChildren").click(function(){
+            $.ajax({
+                url: "/getChildren?id=" + $("#personID").val(),
+                success: function(result) {
+                    var res = JSON.parse(result)
+                    var str = ""
+ 
+                    for (i in res) {
+                        str += "Child: " + res[i].firstname
+                        str += " " + res[i].lastname + "<br />"
+                    } 
+ 
+                    $("#viewer").html(str)
+                }
+            })
+        })
+    })
+    </script> -->
+    <title>Create account</title>
+</head>
+<body>
+    <h1>Create your account!</h1>
+    <form action="/create_account" method="POST">
+        Username:
+        <input type="text" name="username" required /> <br />
+        Password:
+        <input type="password" name="password" required /> <br />
+        Retype password:
+        <input type="password" name="verifyPassword" required /> <br />
+        <button type="submit">Create account!</button>
+    </form>
+</body>
+</html>

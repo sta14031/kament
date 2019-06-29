@@ -1,0 +1,49 @@
+body {
+    background-color: #eeeeff;
+    color: black;
+
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+
+    padding: 20px;
+}
+
+h1, h2, h3 {
+    font-family: 'Times New Roman', Times, serif;
+    color: #3377dd;
+    text-shadow: 1px 1px black;
+}
+
+a {
+    color: black;
+    padding: 3px 5px 9px 5px;
+}
+
+h1, h2, h3 a {
+    color: #3377dd;
+}
+
+a:hover {
+    color: #3399ff;
+}
+
+div {
+    padding: 10px;
+    margin: 20px;
+}
+
+div#posts {
+    border: 5px solid #202070;
+    border-radius: 10px;
+    margin-left: 50px;
+    padding: 0;
+}
+
+div.post {
+    border: none;
+    background-color: #e0e0ff;
+    margin: 0;
+}
+
+div.even {
+    background-color: #ccccff;
+}

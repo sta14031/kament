@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" type="text/css" href="stylesheets/kament.css" />
+    <script src="jquery-3.3.1.min.js"></script>
+    <script type='text/javascript'>
+    $(document).ready(function(){
+        $.ajax({
+            url: '/getPosts',
+            type: 'post',
+            success: function(res){
+                // $('#posts').html(res)
+                let posts = JSON.parse(res)
+                var str = ""
+
+                for (i in posts)
+                {
+                    str += "<div class='post"
+                    if (i%2 != 0) str += " even"
+                    
+                    str += "'><h2>" + posts[i].title + "</h2><p>"
+                    if (posts[i].islink)
+                    {
+                        str += '<a href="' + posts[i].content
+                        + '" >' + posts[i].content + "</a>"
+                    }
+                    else
+                    {
+                        str += posts[i].content 
+                    }
+                    str += "</p></div>"
+                }
+                $('#posts').html(str)
+            }
+        })
+    })
+    </script>
+    <title>Kament</title>
+</head>
+<body>
+    <h1>Welcome to this awesome page</h1>
+    <div id='posts'></div>
+</body>
+</html>

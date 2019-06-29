@@ -3,8 +3,6 @@ body {
     color: black;
 
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-
-    padding: 20px;
 }
 
 h1, h2, h3 {
@@ -29,6 +27,50 @@ a:hover {
 div {
     padding: 10px;
     margin: 20px;
+}
+
+/* Header */
+div#header {
+    background-color: #3377dd;
+    margin: 0;
+    padding-left: 100px;
+    border-bottom: 20px solid black;
+
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100vw;
+    height: 120px;
+}
+
+div#header p {
+    position: fixed;
+    font-size: 30px;   
+    padding: 0;
+}
+
+div#header div#login {
+    float: right;
+    height: 80px;
+    margin-top: -10px;
+    padding-right: 100px;
+}
+
+div#header div#login button {
+    width: 100%;
+}
+
+span.title {
+    font-size: 20px;
+    font-family: Georgia, 'Times New Roman', Times, serif;
+    font-weight: bold;
+}
+
+span.welcome {
+    font-size: 90px;
+    font-family: Georgia, 'Times New Roman', Times, serif;
+    position: relative;
+    top: 20px;
 }
 
 div#posts {

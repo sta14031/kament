@@ -20,12 +20,8 @@ app.set('views', path.join(__dirname, 'views'))
 app.set('view engine', 'ejs')
 
 // The root
-app.get('/', (req, res) => res.render('public/index.html'))
-
-// The main page
-app.get('/test', (req, res) => {
-  res.render('pages/view_posts')
-})
+//app.get('/', (req, res) => res.render('public/index.html'))
+app.get('/', (req, res) => res.render('pages/view_posts'))
 
 // Get all posts utility
 app.post('/getPosts', (req, res) => {

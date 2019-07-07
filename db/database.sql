@@ -54,3 +54,5 @@ INSERT INTO Posts
 VALUES
     (2, 'My awesome link post',
     'google.com/', TRUE);
+
+SELECT p.Poster, p.Title, p.Content, (SELECT COUNT(*) AS CommentCount FROM (SELECT * FROM Comments c LEFT JOIN Posts p ON c.Post = p.Id) cn WHERE cn.Post = p.Id) FROM Posts p;

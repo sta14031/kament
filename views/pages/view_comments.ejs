@@ -8,35 +8,27 @@
     <script src="jquery-3.3.1.min.js"></script>
     <script type='text/javascript'>
     $(document).ready(function(){
+        window.alert(
+            <%= query.postid %>
+        )
         $.ajax({
-            url: '/getPosts',
+            url: '/getComments',
             type: 'post',
             success: function(res){
-                let posts = JSON.parse(res)
+                let comments = JSON.parse(res)
                 var str = ""
 
-                for (i in posts)
+                for (i in comments)
                 {
-                    str += "<div class='post"
-                    if (i%2 != 0) str += " even"
-                    
-                    str += "'><h2>" + posts[i].title + "</h2><p>"
-                    if (posts[i].islink)
-                    {
-                        str += '<a href="' + posts[i].content
-                        + '" >' + posts[i].content + "</a>"
-                    }
-                    else
-                    {
-                        str += posts[i].content 
-                    }
+                    str += "<div class='comment>"
+                    str += "'<h2>" + comments[i].title + "</h2><p>"
                     str += "</p><a class='comment'"
-                    str += "href='/view_comments?postid=" + posts[i].id
+                    str += "href='/view_comments?id=" + posts[i].id
                     str += "'>" + posts[i].commentcount + " Comment"
                     if (posts[i].commentcount != 1) str += "s";
                     str += "</a></div>"
                 }
-                $('#posts').html(str)
+                $('#comments').html(str)
             }
         })
     })
@@ -45,7 +37,7 @@
 </head>
 <body>
     <% include ../partials/header.ejs %>
-    <h1>All posts</h1>
-    <div id='posts'></div>
+    <h1>Comments on the post</h1>
+    <div id='comments'></div>
 </body>
 </html>

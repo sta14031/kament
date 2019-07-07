@@ -20,8 +20,17 @@ h1, h2, h3 a {
     color: #3377dd;
 }
 
+a.comment {
+    color: #444;
+    font-size: 10pt;
+}
+
 a:hover {
     color: #3399ff;
+}
+
+a.light:hover {
+    color: #ddddff;
 }
 
 div {
@@ -49,7 +58,7 @@ div#header p {
     padding: 0;
 }
 
-div#header div#login {
+div#header div {
     float: right;
     height: 80px;
     margin-top: -10px;
@@ -71,6 +80,19 @@ span.welcome {
     font-family: Georgia, 'Times New Roman', Times, serif;
     position: relative;
     top: 20px;
+}
+
+span.welcome a { text-decoration: none; }
+span.welcome a:hover { color: black; }
+
+td.err {
+    text-align: center;
+    color: white;
+}
+
+input.err {
+    border: 3px solid red;
+    box-sizing: border-box;
 }
 
 div#posts {

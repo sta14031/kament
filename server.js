@@ -15,25 +15,64 @@ const pool = new Pool({connectionString: connectionString});
 const path = require('path')
 const PORT = process.env.PORT || 5000
 
+const session = require('express-session')
+
 app.use(express.static(path.join(__dirname, 'public')))
+app.use(session({
+  resave: false,
+  saveUninitialized: true,
+  secret: "What do I put here?"
+}))
 app.set('views', path.join(__dirname, 'views'))
 app.set('view engine', 'ejs')
 
 // The root
-//app.get('/', (req, res) => res.render('public/index.html'))
-app.get('/', (req, res) => res.render('pages/view_posts'))
+app.get('/', (req, res) => {
+  res.render(
+    'pages/view_posts',
+    {
+      userID: req.session.userID,
+      username: req.session.username,
+      query: req.query
+    })
+})
 
 // Get all posts utility
 app.post('/getPosts', (req, res) => {
-  pool.query('SELECT * FROM Posts', (err, qres) => {
+  pool.query('SELECT *, (SELECT COUNT(*) AS CommentCount FROM (SELECT * FROM Comments c LEFT JOIN Posts p ON c.Post = p.Id) cn WHERE cn.Post = p.Id) FROM Posts p', (err, qres) => {
+    if (err) throw err;
     res.send(JSON.stringify(qres.rows))
     res.end()
   })
 })
 
-// Some tests
-app.get('/good', (req, res) => res.send('<h1>Good</h1>'))
-app.get('/bad', (req, res) => res.send('<h1>Bad</h1>'))
+// View comments link
+app.get('/view_comments', (req, res) => {
+  res.render(
+    'pages/view_comments',
+    {
+      userID: req.session.userID,
+      username: req.session.username,
+      query: req.query
+    })
+})
+
+// Get all comments on a post utility
+app.post('/getComments', (req, res) => {
+  pool.query('SELECT * FROM Comments c LEFT JOIN Posts p ON c.Poster = p.Id WHERE p.Id = $1',
+  [req.body.postid], (err, qres) => {
+  if (err) throw err;
+    res.send(JSON.stringify(qres.rows))
+    res.end();
+  })
+})
+
+// Let the user log out
+app.get('/logout', (req, res) => {
+  req.session.userID = null
+  req.session.username = null
+  res.redirect('/')
+})
 
 // Add a new row to Users
 app.post('/create_account', (req, res) => {
@@ -59,22 +98,29 @@ app.post('/log_in', (req, res) => {
   let password = req.body.password
 
   pool.query(
-    'SELECT Password FROM Users WHERE Username ILIKE $1',
+    'SELECT Id, Username, Password FROM Users WHERE Username ILIKE $1',
     [username],
     (err, qres) => {
       if (err) throw err;
-      bcrypt.compare(password, qres.rows[0].password).then((valid) => {
-        if (valid)
-        {
-          // Log in the user!
-          res.redirect('/good')
-        }
-        else
-        {
-          // Bad password
-          res.redirect('/bad')
-        }
-      })
+      if (qres.rowCount == 0) {
+        // No user exists with that name
+        res.redirect('/?err=baduname')
+      } else {
+        bcrypt.compare(password, qres.rows[0].password).then((valid) => {
+          if (valid)
+          {
+            // Log in the user!
+            req.session.userID = qres.rows[0].id
+            req.session.username = qres.rows[0].username
+            res.redirect('/')
+          }
+          else
+          {
+            // Bad password
+            res.redirect('/?err=badpw')
+          }
+        })
+      }
     }
   )
 })

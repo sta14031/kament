@@ -1,15 +1,42 @@
 <div id="header">
-    <span class="welcome">Kament</span>
-    <div id="login">
-        <span class="title">Log in here</span><br />
-        <table>
-        <tr><td>Username:</td><td>
-        <input type="text" name="username" /></td></tr>
-        <tr><td>Password:</td><td>
-        <input type="password" name="password" /></td></tr>
-        <tr><td colspan="2">
-        <button type='submit'>Log in</button></td></tr>
-        </table>
+    <span class="welcome">
+    <a href="/">Kament</a></span>
+    <div id="login"
+        <%if (userID) {%>
+            <!-- The user functions -->
+            <span class="title">Welcome, 
+            <%= username %>!</span> <br />
+            <a class="light" href="">Submit a new post</a> <br />
+            <a class="light" href="/logout">Log out</a>
+
+        <%} else {%>
+            <!-- Invite the user to log in -->
+            <span class="title">Log in here</span><br />
+            <form action="/log_in" method="POST"><table>
+            <tr><td>Username:</td><td>
+            <input type="text" name="username"
+            <%if (query.err == "baduname") {%>
+                class="err"
+            <%}%> /></td></tr>
+            <tr><td>Password:</td><td>
+            <input type="password" name="password"
+            <%if (query.err == "badpw") {%>
+                class="err"
+            <%}%> /></td></tr>
+            <tr><td><a href="/create_account.html" class="light">
+            Sign up</a></td><td>
+            <button type="submit">Log in
+            </button></td></tr>
+
+            <!-- This row is used to display error messages -->
+            <tr><td class="err" colspan="2">
+            <%if (query.err == "badpw") {%>
+                <span class="error">* Incorrect password.</span>
+            <%} else if (query.err == "baduname") {%>
+                <span class="error">* The user does not exist.</span>
+            <%}%>
+            </td></tr></table></form>
+        <%}%>
     </div>
 </div>
 

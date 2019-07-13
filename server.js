@@ -67,10 +67,60 @@ app.post('/getComments', (req, res) => {
   })
 })
 
+// Create a new text post
+app.get('/text_post', (req, res) => {
+  if (!req.session.userID){
+    res.redirect('/')
+  }
+
+  res.render(
+    'pages/text_post',
+    {
+      userID: req.session.userID,
+      username: req.session.username,
+      query: req.query
+    })
+})
+
+// Create a new link post
+app.get('/link_post', (req, res) => {
+  if (!req.session.userID){
+    res.redirect('/')
+  }
+
+  res.render(
+    'pages/link_post',
+    {
+      userID: req.session.userID,
+      username: req.session.username,
+      query: req.query
+    })
+})
+
+// Handle inserting posts to the database
+app.post('/createPost', (req, res) => {
+  let title = req.body.title
+  let content = req.body.content
+  let isLink = req.body.isLink
+
+  let userID = req.session.userID
+
+  console.log("Title: " + title)
+  console.log("Content: " + content)
+  console.log("Is Link: " + isLink)
+  console.log("User ID: " + userID)
+
+  pool.query('INSERT INTO Posts (Title, Content, IsLink, Poster) VALUES ($1, $2, $3, $4)',
+  [title, content, isLink, userID],
+  (err, qres) => {
+    if (err) throw err;
+    res.redirect('/view_comments?postid=' + qres[0].id) // Go to the page
+  })
+})
+
 // Let the user log out
 app.get('/logout', (req, res) => {
-  req.session.userID = null
-  req.session.username = null
+  req.session.destroy()
   res.redirect('/')
 })
 

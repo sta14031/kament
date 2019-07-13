@@ -1,12 +1,13 @@
 <div id="header">
     <span class="welcome">
     <a href="/">Kament</a></span>
-    <div id="login"
+    <div id="login">
         <%if (userID) {%>
             <!-- The user functions -->
             <span class="title">Welcome, 
             <%= username %>!</span> <br />
-            <a class="light" href="">Submit a new post</a> <br />
+            <a class="light" href="/text_post">Submit a new text post</a> <br />
+            <a class="light" href="/link_post">Submit a new link post</a> <br />
             <a class="light" href="/logout">Log out</a>
 
         <%} else {%>

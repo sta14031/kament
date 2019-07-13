@@ -111,3 +111,30 @@ div.post {
 div.even {
     background-color: #ccccff;
 }
+
+/* New post forms */
+form.newPost {
+    margin-left: 80px;
+    font-size: 16px;
+}
+
+form.newPost td {
+    vertical-align: top;
+}
+
+textarea {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-size: 14px;
+}
+
+form.newPost input {
+    font-family: 'Times New Roman', Times, serif;
+    font-size: 24px;
+}
+
+form.newPost input.link {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-size: 20px;
+    color: #3377dd;
+    text-decoration: underline;
+}

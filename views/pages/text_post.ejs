@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" type="text/css" href="stylesheets/kament.css" />
+    <script src="jquery-3.3.1.min.js"></script>
+<!--    <script type='text/javascript'>
+    $(document).ready(function(){
+        window.alert(
+            <%= query.postid %>
+        )
+        $.ajax({
+            url: '/getComments',
+            type: 'post',
+            success: function(res){
+                let comments = JSON.parse(res)
+                var str = ""
+
+                for (i in comments)
+                {
+                    str += "<div class='comment>"
+                    str += "'<h2>" + comments[i].title + "</h2><p>"
+                    str += "</p><a class='comment'"
+                    str += "href='/view_comments?id=" + posts[i].id
+                    str += "'>" + posts[i].commentcount + " Comment"
+                    if (posts[i].commentcount != 1) str += "s";
+                    str += "</a></div>"
+                }
+                $('#comments').html(str)
+            }
+        })
+    })
+    </script> -->
+    <title>Kament</title>
+</head>
+<body>
+    <% include ../partials/header.ejs %>
+    <h1>New Text Post</h1>
+    <form class="newPost" action="/createPost" method="POST">
+    <table>
+        <tr><td>Title:</td><td>
+        <input type="text" name="title" size="40" />
+        </td></tr><tr><td>Text:</td><td>
+        <textarea name="content" cols="80" rows="20"></textarea>
+        </td></tr><tr><td></td><td>
+        <button type="submit">Create post</button>
+        </td></tr>
+    </table>
+    <input type="hidden" name="isLink" value="false" />
+    </form>
+</body>
+</html>

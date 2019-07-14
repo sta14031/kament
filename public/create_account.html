@@ -6,16 +6,25 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <link rel="stylesheet" type="text/css" href="stylesheets/kament.css" />
     <script src="jquery-3.3.1.min.js"></script>
-<!--    <script type="text/javascript">
+    <script type="text/javascript">
     $(document).ready(function(){
-        // Get Details (of person)
-        $("#getDetails").click(function(){
-            $.ajax({
-                url: "/getPerson?id=" + $("#personID").val(),
-                success: function(result) {
-                    $("#viewer").html(result)
-                }
-            })
+        // Verify and submit
+        $("#create").click(function(){
+            if ($("#password").val() == $("#verifyPassword").val()){
+                $.ajax({
+                    url: "/create_account",
+                    type: "post",
+                    data: {
+                        username: $("#username").val(),
+                        password: $("#password").val(),
+                    },
+                    success: function(result) {
+                        window.location.href = "/"
+                    }
+                })
+            } else {
+                // The passwords did not match
+            }
         })
 
         // Get parents of person
@@ -53,19 +62,21 @@
             })
         })
     })
-    </script> -->
+    </script>
     <title>Create account</title>
 </head>
 <body>
     <h1>Create your account!</h1>
-    <form action="/create_account" method="POST">
-        Username:
-        <input type="text" name="username" required /> <br />
-        Password:
-        <input type="password" name="password" required /> <br />
-        Retype password:
-        <input type="password" name="verifyPassword" required /> <br />
-        <button type="submit">Create account!</button>
-    </form>
+    <!--<form action="/create_account" method="POST">-->
+    <table>
+        <tr><td>Username:</td><td>
+        <input type="text" id="username" required />
+        </td></tr><tr><td>Password:</td><td>
+        <input type="password" id="password" required />
+        </td></tr><tr><td>Retype password:</td><td>
+        <input type="password" id="verifyPassword" required />
+        </td></tr><tr><td></td><td>
+        <button type="button" id="create">Create account!</button></td></tr>
+    </table>
 </body>
 </html>

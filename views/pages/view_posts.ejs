@@ -20,7 +20,9 @@
                     str += "<div class='post"
                     if (i%2 != 0) str += " even"
                     
-                    str += "'><h2>" + posts[i].title + "</h2><p>"
+                    str += "'><p class='title'>" + posts[i].title
+                    str += "<span class='poster'> by "
+                    str += posts[i].username + "</span></p><p>"
                     if (posts[i].islink)
                     {
                         str += '<a href="' + posts[i].content
@@ -28,7 +30,12 @@
                     }
                     else
                     {
-                        str += posts[i].content 
+                        var content = posts[i].content 
+                        // Replace newlines with <br>s
+                        content = content.replace(
+                            new RegExp('\r?\n','g'), '<br />'
+                        );
+                        str += content
                     }
                     str += "</p><a class='comment'"
                     str += "href='/view_comments?postid=" + posts[i].id
@@ -45,7 +52,7 @@
 </head>
 <body>
     <% include ../partials/header.ejs %>
-    <h1>All posts</h1>
+    <h1>Most recent posts</h1>
     <div id='posts'></div>
 </body>
 </html>

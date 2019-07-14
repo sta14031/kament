@@ -21,7 +21,7 @@ app.use(express.static(path.join(__dirname, 'public')))
 app.use(session({
   resave: false,
   saveUninitialized: true,
-  secret: "What do I put here?"
+  secret: "The greatest secret string in all of CS313"
 }))
 app.set('views', path.join(__dirname, 'views'))
 app.set('view engine', 'ejs')
@@ -39,7 +39,16 @@ app.get('/', (req, res) => {
 
 // Get all posts utility
 app.post('/getPosts', (req, res) => {
-  pool.query('SELECT *, (SELECT COUNT(*) AS CommentCount FROM (SELECT * FROM Comments c LEFT JOIN Posts p ON c.Post = p.Id) cn WHERE cn.Post = p.Id) FROM Posts p', (err, qres) => {
+  pool.query('\
+SELECT *, (SELECT COUNT(*) AS CommentCount FROM \
+  (SELECT * FROM \
+    Comments c LEFT JOIN Posts p ON c.Post = p.Id \
+  ) cn WHERE cn.Post = p.Id) \
+FROM \
+  Posts p LEFT JOIN Users u ON p.Poster = u.Id \
+ORDER BY p.Id DESC\
+  ', 
+  (err, qres) => {
     if (err) throw err;
     res.send(JSON.stringify(qres.rows))
     res.end()
@@ -136,6 +145,10 @@ app.post('/create_account', (req, res) => {
       [username, hash],
       (err, qres) => {
         if (err) throw err;
+
+        // Log in the user (save a session variable)
+//      req.session.userID = qres.rows[0].id
+//      req.session.username = qres.rows[0].username
         res.redirect('/')
       }
     )
@@ -148,7 +161,7 @@ app.post('/log_in', (req, res) => {
   let password = req.body.password
 
   pool.query(
-    'SELECT Id, Username, Password FROM Users WHERE Username ILIKE $1',
+    'SELECT * FROM Users WHERE Username ILIKE $1',
     [username],
     (err, qres) => {
       if (err) throw err;

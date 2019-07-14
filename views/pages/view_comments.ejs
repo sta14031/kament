@@ -8,25 +8,28 @@
     <script src="jquery-3.3.1.min.js"></script>
     <script type='text/javascript'>
     $(document).ready(function(){
-        window.alert(
+        /*window.alert(
             <%= query.postid %>
-        )
+        )*/
         $.ajax({
             url: '/getComments',
             type: 'post',
+            data: {postid: <%= query.postid %>},
             success: function(res){
+                window.alert("Ajax returned!")
+                window.alert(res)
                 let comments = JSON.parse(res)
                 var str = ""
 
                 for (i in comments)
                 {
-                    str += "<div class='comment>"
+                    str += "<div class='comment'>"
                     str += "'<h2>" + comments[i].title + "</h2><p>"
-                    str += "</p><a class='comment'"
+/*                  str += "</p><a class='comment'"
                     str += "href='/view_comments?id=" + posts[i].id
                     str += "'>" + posts[i].commentcount + " Comment"
                     if (posts[i].commentcount != 1) str += "s";
-                    str += "</a></div>"
+                    str += "</a></div>"*/
                 }
                 $('#comments').html(str)
             }

@@ -13,11 +13,26 @@
             type: 'post',
             data: {postid: <%= query.postid %>},
             success: function(res){
-                let comments = JSON.parse(res)
+                let obj = JSON.parse(res)
+                let post = obj[0]
+                let comments = obj[1]
 
+                var body = post.body 
+
+                if (post.islink){
+                    body = "<a href='" + body
+                         + "'>" + body + "</a>"
+                }else{
+                    // Replace newlines with <br>s
+                    body = body.replace(
+                        new RegExp('\r?\n','g'), '<br />'
+                    );
+                }
+                
                 $("#content").html("<h1>" + 
-                comments[0].title
-                + "</h1>" + comments[0].body)
+                post.title
+                + "<span class='poster'>by "
+                + post.username + "</span></h1>" + body)
 
                 var str = ""
                 for (i in comments)
@@ -41,7 +56,7 @@
         <!-- Present the box to let the user leave a comment -->
         <h2>Leave a comment on this post!</h2>
         <div>
-            <form action="/create_comment" method="POST">
+            <form action="/createComment" method="POST">
             <input type="hidden" name="postid" value="<%= query.postid %>" />
             <textarea name="content" rows="10" cols="80" required></textarea> 
             <br /> <button type="submit">Submit</button>
@@ -49,7 +64,7 @@
         </div>
     <%} else {%>
         <!-- Invite the user to log in -->
-        log in
+        <h2>Log in to leave a comment on this post!</h2>
     <%}%>
 </body>
 </html>

@@ -16,7 +16,8 @@
             <form action="/log_in" method="POST"><table>
             <tr><td>Username:</td><td>
             <input type="text" name="username"
-            <%if (query.err == "baduname") {%>
+            <%if (query.err == "baduname"
+               || query.err == "nameinuse") {%>
                 class="err"
             <%}%> /></td></tr>
             <tr><td>Password:</td><td>
@@ -35,6 +36,8 @@
                 <span class="error">* Incorrect password.</span>
             <%} else if (query.err == "baduname") {%>
                 <span class="error">* The user does not exist.</span>
+            <%} else if (query.err == "nameinuse") {%>
+                <span class="error">* The username is already in use.</span>
             <%}%>
             </td></tr></table></form>
         <%}%>

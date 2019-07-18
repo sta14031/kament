@@ -67,7 +67,7 @@ app.get('/view_comments', (req, res) => {
 })
 
 // Get all comments on a post utility
-app.post('/getComments', (req, res) => {
+/*app.post('/getComments', (req, res) => {
   pool.query('\
 SELECT * FROM \
 Comments c LEFT JOIN Posts p ON c.Post = p.PostId \
@@ -79,8 +79,33 @@ ORDER BY c.CommentId',
     res.send(JSON.stringify(qres.rows))
     res.end();
   })
-})
+})*/
 
+// Get all comments on a post utility
+app.post('/getComments', (req, res) => {
+  // Query to get the post information
+  pool.query('\
+SELECT p.PostId, p.Poster, p.Title, p.Body, p.IsLink, \
+       u.UserId, u.Username FROM \
+Posts p LEFT JOIN Users u ON p.Poster = u.UserId \
+WHERE p.PostId = $1',
+    [req.body.postid], (err, qres1) => {
+    if (err) throw err;
+
+    // Query to get the comments
+    pool.query('\
+SELECT c.CommentId, c.Post, c.Poster, c.Content, \
+       u.UserId, u.Username FROM \
+Comments c LEFT JOIN Users u ON c.Poster = u.UserId \
+WHERE c.Post = $1\
+ORDER BY c.CommentId',
+    [req.body.postid], (err, qres2) => {
+    if (err) throw err;
+      res.send(JSON.stringify([qres1.rows[0], qres2.rows]))
+      res.end();
+    })
+  })
+})
 // Create a new text post
 app.get('/text_post', (req, res) => {
   if (!req.session.userID){
@@ -119,16 +144,34 @@ app.post('/createPost', (req, res) => {
 
   let userID = req.session.userID
 
-  console.log("Title: " + title)
+/*console.log("Title: " + title)
   console.log("Content: " + content)
   console.log("Is Link: " + isLink)
-  console.log("User ID: " + userID)
+  console.log("User ID: " + userID)*/
 
-  pool.query('INSERT INTO Posts (Title, Body, IsLink, Poster) VALUES ($1, $2, $3, $4)',
+  pool.query('INSERT INTO Posts (Title, Body, IsLink, Poster) \
+  VALUES ($1, $2, $3, $4)',
   [title, content, isLink, userID],
   (err, qres) => {
     if (err) throw err;
+    console.log(JSON.stringify(qres))
     res.redirect('/view_comments?postid=' + qres[0].postid) // Go to the page
+  })
+})
+
+// Handle inserting comments to the database
+app.post('/createComment', (req, res) => {
+  let postid = req.body.postid
+  let content = req.body.content
+  
+  let userID = req.session.userID
+
+  pool.query('INSERT INTO Comments (Post, Poster, Content) \
+  VALUES ($1, $2, $3)',
+  [postid, userID, content],
+  (err, qres) => {
+    if (err) throw err;
+    res.redirect('/view_comments?postid=' + postid) // Go to the page
   })
 })
 
@@ -143,20 +186,30 @@ app.post('/create_account', (req, res) => {
   let username = req.body.username
   let password = req.body.password
 
-  bcrypt.hash(password, 10, (err, hash) => {
+  // Is there already a user with that username?
+  pool.query('SELECT Username FROM Users WHERE Username ILIKE $1',
+  [username], (err, qres) => {
     if (err) throw err;
-    pool.query(
-      'INSERT INTO Users (Username, Password) VALUES ($1, $2)',
-      [username, hash],
-      (err, qres) => {
+    if (qres.rowCount > 0) {
+      // That name is already in use
+      res.redirect('/?err=nameinuse')
+    } else {
+      bcrypt.hash(password, 10, (err, hash) => {
         if (err) throw err;
+        pool.query(
+          'INSERT INTO Users (Username, Password) VALUES ($1, $2)',
+          [username, hash],
+          (err, qres) => {
+            if (err) throw err;
 
-        // Log in the user (save a session variable)
-//      req.session.userID = qres.rows[0].id
-//      req.session.username = qres.rows[0].username
-        res.redirect('/')
-      }
-    )
+            // Log in the user (save a session variable)
+    //      req.session.userID = qres.rows[0].id
+    //      req.session.username = qres.rows[0].username
+            res.redirect('/')
+          }
+        )
+      })
+    }
   })
 })
 
@@ -175,15 +228,12 @@ app.post('/log_in', (req, res) => {
         res.redirect('/?err=baduname')
       } else {
         bcrypt.compare(password, qres.rows[0].password).then((valid) => {
-          if (valid)
-          {
+          if (valid) {
             // Log in the user!
             req.session.userID = qres.rows[0].userid
             req.session.username = qres.rows[0].username
             res.redirect('/')
-          }
-          else
-          {
+          } else {
             // Bad password
             res.redirect('/?err=badpw')
           }

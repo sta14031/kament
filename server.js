@@ -42,11 +42,11 @@ app.post('/getPosts', (req, res) => {
   pool.query('\
 SELECT *, (SELECT COUNT(*) AS CommentCount FROM \
   (SELECT * FROM \
-    Comments c LEFT JOIN Posts p ON c.Post = p.Id \
-  ) cn WHERE cn.Post = p.Id) \
+    Comments c1 LEFT JOIN Posts p1 ON c1.Post = p1.PostId \
+  ) c2 WHERE c2.Post = p2.PostId) \
 FROM \
-  Posts p LEFT JOIN Users u ON p.Poster = u.Id \
-ORDER BY p.Id DESC\
+  Posts p2 LEFT JOIN Users u ON p2.Poster = u.UserId \
+ORDER BY p2.PostId DESC\
   ', 
   (err, qres) => {
     if (err) throw err;
@@ -68,7 +68,12 @@ app.get('/view_comments', (req, res) => {
 
 // Get all comments on a post utility
 app.post('/getComments', (req, res) => {
-  pool.query('SELECT * FROM Comments c LEFT JOIN Posts p ON c.Poster = p.Id WHERE p.Id = $1',
+  pool.query('\
+SELECT * FROM \
+Comments c LEFT JOIN Posts p ON c.Post = p.PostId \
+           LEFT JOIN Users u ON c.Poster = u.UserId \
+WHERE c.Post = $1\
+ORDER BY c.CommentId',
   [req.body.postid], (err, qres) => {
   if (err) throw err;
     res.send(JSON.stringify(qres.rows))
@@ -119,11 +124,11 @@ app.post('/createPost', (req, res) => {
   console.log("Is Link: " + isLink)
   console.log("User ID: " + userID)
 
-  pool.query('INSERT INTO Posts (Title, Content, IsLink, Poster) VALUES ($1, $2, $3, $4)',
+  pool.query('INSERT INTO Posts (Title, Body, IsLink, Poster) VALUES ($1, $2, $3, $4)',
   [title, content, isLink, userID],
   (err, qres) => {
     if (err) throw err;
-    res.redirect('/view_comments?postid=' + qres[0].id) // Go to the page
+    res.redirect('/view_comments?postid=' + qres[0].postid) // Go to the page
   })
 })
 
@@ -173,7 +178,7 @@ app.post('/log_in', (req, res) => {
           if (valid)
           {
             // Log in the user!
-            req.session.userID = qres.rows[0].id
+            req.session.userID = qres.rows[0].userid
             req.session.username = qres.rows[0].username
             res.redirect('/')
           }

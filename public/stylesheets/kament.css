@@ -16,9 +16,7 @@ a {
     padding: 3px 5px 9px 5px;
 }
 
-h1, h2, h3 a {
-    color: #3377dd;
-}
+h1, h2, h3 a { color: #3377dd; }
 
 /* View Comments page */
 p.title {
@@ -26,6 +24,29 @@ p.title {
     font-family: 'Times New Roman', Times, serif;
     color: #3377dd;
     text-shadow: 1px 1px black;
+}
+
+div#content {
+    border: 5px solid black;
+    border-radius: 4px;
+    padding: 30px;
+}
+
+div.comment {
+    border: 5px solid black;
+    border-radius: 7px;
+    background-color: #e0e0ff;
+}
+
+div.comment p.poster {
+    font-style: italic;
+    font-weight: bold;
+    color: #444;
+    margin-bottom: 2px;
+}
+
+div.comment p.content {
+    margin-top: 0;
 }
 
 span.poster {

@@ -1,6 +1,6 @@
 CREATE TABLE Users
 (
-    Id SERIAL,
+    UserId SERIAL,
     Username VARCHAR(64),
     Password VARCHAR(64),
 
@@ -9,10 +9,10 @@ CREATE TABLE Users
 
 CREATE TABLE Posts
 (
-    Id SERIAL,
+    PostId SERIAL,
     Poster INT,
     Title VARCHAR(32),
-    Content TEXT,
+    Body TEXT,
     IsLink BOOLEAN,
 
     PRIMARY KEY (Id),
@@ -21,7 +21,7 @@ CREATE TABLE Posts
 
 CREATE TABLE Comments
 (
-    Id SERIAL,
+    CommentId SERIAL,
     Post INT,
     Poster INT,
     Content TEXT,
@@ -33,7 +33,7 @@ CREATE TABLE Comments
 
 CREATE TABLE Ratings
 (
-    Id SERIAL,
+    RatingId SERIAL,
     Post INT,
     Val INT,
 
@@ -56,3 +56,26 @@ VALUES
     'google.com/', TRUE);
 
 SELECT p.Poster, p.Title, p.Content, (SELECT COUNT(*) AS CommentCount FROM (SELECT * FROM Comments c LEFT JOIN Posts p ON c.Post = p.Id) cn WHERE cn.Post = p.Id) FROM Posts p;
+
+ALTER TABLE Users
+RENAME COLUMN Id TO UserId;
+
+ALTER TABLE Posts
+RENAME COLUMN Id TO PostId;
+ALTER TABLE Posts
+RENAME COLUMN Content TO Body;
+
+ALTER TABLE Comments
+RENAME COLUMN Id TO CommentId;
+
+ALTER TABLE Ratings
+RENAME COLUMN Id TO RatingId;
+
+SELECT CASE WHEN (SELECT COUNT(*) FROM 
+  (SELECT * FROM Comments c WHERE c.Post = 2)
+AS cn) = 0
+THEN
+0
+ELSE
+1
+END;

@@ -8,28 +8,23 @@
     <script src="jquery-3.3.1.min.js"></script>
     <script type='text/javascript'>
     $(document).ready(function(){
-        /*window.alert(
-            <%= query.postid %>
-        )*/
         $.ajax({
             url: '/getComments',
             type: 'post',
             data: {postid: <%= query.postid %>},
             success: function(res){
-                window.alert("Ajax returned!")
-                window.alert(res)
                 let comments = JSON.parse(res)
-                var str = ""
 
+                $("#content").html("<h1>" + 
+                comments[0].title
+                + "</h1>" + comments[0].body)
+
+                var str = ""
                 for (i in comments)
                 {
-                    str += "<div class='comment'>"
-                    str += "'<h2>" + comments[i].title + "</h2><p>"
-/*                  str += "</p><a class='comment'"
-                    str += "href='/view_comments?id=" + posts[i].id
-                    str += "'>" + posts[i].commentcount + " Comment"
-                    if (posts[i].commentcount != 1) str += "s";
-                    str += "</a></div>"*/
+                    str += "<div class='comment'><p class='poster'>"
+                    str += comments[i].username + ":</p><p class='content'>"
+                    str += comments[i].content + "</p></div>"
                 }
                 $('#comments').html(str)
             }
@@ -40,7 +35,21 @@
 </head>
 <body>
     <% include ../partials/header.ejs %>
-    <h1>Comments on the post</h1>
+    <div id="content"></div>
     <div id='comments'></div>
+    <%if (userID) {%>
+        <!-- Present the box to let the user leave a comment -->
+        <h2>Leave a comment on this post!</h2>
+        <div>
+            <form action="/create_comment" method="POST">
+            <input type="hidden" name="postid" value="<%= query.postid %>" />
+            <textarea name="content" rows="10" cols="80" required></textarea> 
+            <br /> <button type="submit">Submit</button>
+            </form>
+        </div>
+    <%} else {%>
+        <!-- Invite the user to log in -->
+        log in
+    <%}%>
 </body>
 </html>

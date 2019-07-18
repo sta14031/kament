@@ -25,20 +25,20 @@
                     str += posts[i].username + "</span></p><p>"
                     if (posts[i].islink)
                     {
-                        str += '<a href="' + posts[i].content
-                        + '" >' + posts[i].content + "</a>"
+                        str += '<a href="' + posts[i].body
+                        + '" >' + posts[i].body + "</a>"
                     }
                     else
                     {
-                        var content = posts[i].content 
+                        var body = posts[i].body 
                         // Replace newlines with <br>s
-                        content = content.replace(
+                        body = body.replace(
                             new RegExp('\r?\n','g'), '<br />'
                         );
-                        str += content
+                        str += body
                     }
                     str += "</p><a class='comment'"
-                    str += "href='/view_comments?postid=" + posts[i].id
+                    str += "href='/view_comments?postid=" + posts[i].postid
                     str += "'>" + posts[i].commentcount + " Comment"
                     if (posts[i].commentcount != 1) str += "s";
                     str += "</a></div>"

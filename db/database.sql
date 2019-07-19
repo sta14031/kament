@@ -79,3 +79,10 @@ THEN
 ELSE
 1
 END;
+
+
+SELECT Username, userid FROM Users WHERE UserId = 
+(SELECT currval(pg_get_serial_sequence('Users','userid')) AS s);
+
+
+SELECT setval('users_id_seq', 2, true); 

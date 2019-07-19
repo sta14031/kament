@@ -8,9 +8,13 @@
     <script src="jquery-3.3.1.min.js"></script>
     <script type="text/javascript">
     $(document).ready(function(){
+        $("span#badpw").hide()
+
         // Verify and submit
         $("#create").click(function(){
             if ($("#password").val() == $("#verifyPassword").val()){
+                $("#password").css("border", "")
+                $("#verifyPassword").css("border", "")
                 $.ajax({
                     url: "/create_account",
                     type: "post",
@@ -18,48 +22,27 @@
                         username: $("#username").val(),
                         password: $("#password").val(),
                     },
-                    success: function(result) {
+                    success: function(result, status) {
                         window.location.href = "/"
+                    },
+                    error: function(xhr) {
+                        if (xhr.status == 400) {
+                            // The username is already in use
+                            $("#username").css("border", "3px solid red")
+                            $("span#badpw").html(
+                                "* The username is already in use.")
+                            $("span#badpw").show()
+                        }
                     }
                 })
             } else {
                 // The passwords did not match
+                $("#username").css("border", "")
+                $("#password").css("border", "3px solid red")
+                $("#verifyPassword").css("border", "3px solid red")
+                $("span#err").html("* The passwords do not match.")
+                $("span#err").show()
             }
-        })
-
-        // Get parents of person
-        $("#getParents").click(function(){
-            $.ajax({
-                url: "/getParents?id=" + $("#personID").val(),
-                success: function(result) {
-                    var res = JSON.parse(result)
-                    var str = ""
-
-                    str += "Father: " + res[0].firstname 
-                    str += " " + res[0].lastname + " <br />"
-                    str += "Mother: " + res[1].firstname
-                    str += " " + res[1].lastname
-
-                    $('#viewer').html(str);
-                }
-            })
-        })
-
-        $("#getChildren").click(function(){
-            $.ajax({
-                url: "/getChildren?id=" + $("#personID").val(),
-                success: function(result) {
-                    var res = JSON.parse(result)
-                    var str = ""
- 
-                    for (i in res) {
-                        str += "Child: " + res[i].firstname
-                        str += " " + res[i].lastname + "<br />"
-                    } 
- 
-                    $("#viewer").html(str)
-                }
-            })
         })
     })
     </script>
@@ -67,7 +50,6 @@
 </head>
 <body>
     <h1>Create your account!</h1>
-    <!--<form action="/create_account" method="POST">-->
     <table>
         <tr><td>Username:</td><td>
         <input type="text" id="username" required />
@@ -77,6 +59,7 @@
         <input type="password" id="verifyPassword" required />
         </td></tr><tr><td></td><td>
         <button type="button" id="create">Create account!</button></td></tr>
-    </table>
+    </table> <br />
+    <span id="err"></span>
 </body>
 </html>

@@ -188,24 +188,34 @@ app.post('/create_account', (req, res) => {
 
   // Is there already a user with that username?
   pool.query('SELECT Username FROM Users WHERE Username ILIKE $1',
-  [username], (err, qres) => {
+  [username], (err, qres1) => {
     if (err) throw err;
-    if (qres.rowCount > 0) {
+    if (qres1.rowCount > 0) {
       // That name is already in use
-      res.redirect('/?err=nameinuse')
+      res.status(400).send()
+      res.end();
     } else {
       bcrypt.hash(password, 10, (err, hash) => {
         if (err) throw err;
         pool.query(
           'INSERT INTO Users (Username, Password) VALUES ($1, $2)',
           [username, hash],
-          (err, qres) => {
+          (err, qres2) => {
             if (err) throw err;
 
             // Log in the user (save a session variable)
-    //      req.session.userID = qres.rows[0].id
-    //      req.session.username = qres.rows[0].username
-            res.redirect('/')
+            // Need to get the value of most recent sequence
+            pool.query("\
+SELECT Username, UserId FROM Users WHERE UserId = \
+(SELECT currval(pg_get_serial_sequence('Users','userid')) AS s)",
+            (err, qres3) =>{
+              if (err) throw err;
+
+              req.session.userID = qres3.rows[0].userid
+              req.session.username = qres3.rows[0].username
+              res.status(200).send()
+              res.end();
+            })
           }
         )
       })
@@ -223,22 +233,17 @@ app.post('/log_in', (req, res) => {
     [username],
     (err, qres) => {
       if (err) throw err;
-      if (qres.rowCount == 0) {
-        // No user exists with that name
-        res.redirect('/?err=baduname')
-      } else {
-        bcrypt.compare(password, qres.rows[0].password).then((valid) => {
-          if (valid) {
-            // Log in the user!
-            req.session.userID = qres.rows[0].userid
-            req.session.username = qres.rows[0].username
-            res.redirect('/')
-          } else {
-            // Bad password
-            res.redirect('/?err=badpw')
-          }
-        })
-      }
+      bcrypt.compare(password, qres.rows[0].password).then((valid) => {
+        if (valid) {
+          // Log in the user!
+          req.session.userID = qres.rows[0].userid
+          req.session.username = qres.rows[0].username
+          res.redirect('/')
+        } else {
+          // Bad password
+          res.redirect('/?err=badpw')
+        }
+      })
     }
   )
 })

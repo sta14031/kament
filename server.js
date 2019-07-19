@@ -240,17 +240,22 @@ app.post('/log_in', (req, res) => {
     [username],
     (err, qres) => {
       if (err) throw err;
-      bcrypt.compare(password, qres.rows[0].password).then((valid) => {
-        if (valid) {
-          // Log in the user!
-          req.session.userID = qres.rows[0].userid
-          req.session.username = qres.rows[0].username
-          res.redirect('/')
-        } else {
-          // Bad password
-          res.redirect('/?err=badpw')
-        }
-      })
+        if (qres.rowCount == 0) {
+        // No user exists with that name
+        res.redirect('/?err=baduname')
+      } else {
+        bcrypt.compare(password, qres.rows[0].password).then((valid) => {
+          if (valid) {
+            // Log in the user!
+            req.session.userID = qres.rows[0].userid
+            req.session.username = qres.rows[0].username
+            res.redirect('/')
+          } else {
+            // Bad password
+            res.redirect('/?err=badpw')
+          }
+        })
+      }
     }
   )
 })

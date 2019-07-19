@@ -152,10 +152,17 @@ app.post('/createPost', (req, res) => {
   pool.query('INSERT INTO Posts (Title, Body, IsLink, Poster) \
   VALUES ($1, $2, $3, $4)',
   [title, content, isLink, userID],
-  (err, qres) => {
+  (err, qres1) => {
     if (err) throw err;
-    console.log(JSON.stringify(qres))
-    res.redirect('/view_comments?postid=' + qres[0].postid) // Go to the page
+pool.query(
+  "SELECT currval(pg_get_serial_sequence('Posts','postid'))",
+  (err, qres2) => {
+    if (err) throw err;
+
+    console.log(JSON.stringify(qres2))
+
+      res.redirect('/view_comments?postid=' + qres2.rows[0].currval) // Go to the page
+    })
   })
 })
 

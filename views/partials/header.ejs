@@ -15,13 +15,13 @@
             <span class="title">Log in here</span><br />
             <form action="/log_in" method="POST"><table>
             <tr><td>Username:</td><td>
-            <input type="text" name="username"
+            <input type="text" name="username" maxlength="64"
             <%if (query.err == "baduname"
                || query.err == "nameinuse") {%>
                 class="err"
             <%}%> /></td></tr>
             <tr><td>Password:</td><td>
-            <input type="password" name="password"
+            <input type="password" name="password" maxlength="64"
             <%if (query.err == "badpw") {%>
                 class="err"
             <%}%> /></td></tr>
